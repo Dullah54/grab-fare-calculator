@@ -88,9 +88,9 @@ int main() {
     checkMoney("GrabCar Premium 2 km uses minimum fare", calculateGrabFare(premiumShort, GRABCAR_PREMIUM).total, 15.00);
 
     cout << "\nPromo codes, toll and cash rounding\n";
-    Trip promo = makeTrip(12.5, 25, 14);                 // RM15.875 before discount
+    Trip promo = makeTrip(12.5, 25, 14);                 // 2.00 + 3.13 + 10.75 = RM15.88
     promo.promoCode = "STUDENT10";
-    checkMoney("STUDENT10 takes 10% off RM15.875", calculateGrabFare(promo, GRABCAR).discount, 1.59);
+    checkMoney("STUDENT10 takes 10% off RM15.88", calculateGrabFare(promo, GRABCAR).discount, 1.59);
     checkMoney("STUDENT10 is capped at RM5", promoDiscount("STUDENT10", 80.00), 5.00);
     checkMoney("NEWRIDER takes RM5 off", promoDiscount("NEWRIDER", 13.00), 5.00);
     checkMoney("Discount never bigger than the fare", promoDiscount("NEWRIDER", 4.00), 4.00);
@@ -104,7 +104,13 @@ int main() {
 
     promo.tollRM = 2.10;
     promo.payment = CASH;
-    checkMoney("Cash total RM16.39 rounded to RM16.40", calculateGrabFare(promo, GRABCAR).total, 16.40);
+    FareBreakdown cashFare = calculateGrabFare(promo, GRABCAR);
+    checkMoney("Cash total RM16.39 rounded to RM16.40", cashFare.total, 16.40);
+    double receiptSum = cashFare.baseFare + cashFare.distanceCharge + cashFare.timeCharge + cashFare.surgeOrSurcharge
+                        - cashFare.discount + cashFare.toll + cashFare.roundingAdjustment;
+    checkMoney("Receipt lines add up to the total", receiptSum, cashFare.total);
+    checkMoney("Half a sen rounds up: RM3.125 -> RM3.13", roundToSen(3.125), 3.13);
+    checkMoney("Half a sen rounds up: RM8.385 -> RM8.39", roundToSen(8.385), 8.39);
     checkMoney("Round RM16.77 -> RM16.75", roundToNearest5Sen(16.77), 16.75);
     checkMoney("Round RM16.78 -> RM16.80", roundToNearest5Sen(16.78), 16.80);
     checkMoney("Round RM16.72 -> RM16.70", roundToNearest5Sen(16.72), 16.70);

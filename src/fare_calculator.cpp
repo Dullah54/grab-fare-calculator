@@ -9,7 +9,10 @@
 
 // Rounds a ringgit amount to 2 decimal places (the nearest sen)
 double roundToSen(double amount) {
-    return std::round(amount * 100.0) / 100.0;
+    // The tiny nudge makes half-sen amounts such as RM3.125 or RM8.385 round up,
+    // even when the computer stores them as 3.12499999...
+    double nudge = (amount >= 0) ? 1e-9 : -1e-9;
+    return std::round(amount * 100.0 + nudge) / 100.0;
 }
 
 // Cash payments in Malaysia are rounded to the nearest 5 sen
@@ -130,13 +133,14 @@ FareBreakdown calculateGrabFare(const Trip& trip, RideType type) {
 
     fare.chargedKm      = trip.distanceKm;
     fare.chargedMinutes = trip.durationMin;
-    fare.distanceCharge = fare.chargedKm * fare.ratePerKm;
-    fare.timeCharge     = fare.chargedMinutes * fare.ratePerMin;
+    // Each line of the receipt is rounded to the sen, so the lines always add up to the total
+    fare.distanceCharge = roundToSen(fare.chargedKm * fare.ratePerKm);
+    fare.timeCharge     = roundToSen(fare.chargedMinutes * fare.ratePerMin);
 
     double rideFare = fare.baseFare + fare.distanceCharge + fare.timeCharge;
 
     // Demand surge is added on top of the normal fare
-    fare.surgeOrSurcharge = rideFare * (surgeMultiplier(trip.demand) - 1.0);
+    fare.surgeOrSurcharge = roundToSen(rideFare * (surgeMultiplier(trip.demand) - 1.0));
     rideFare += fare.surgeOrSurcharge;
 
     if (rideFare < minimumFare) {
@@ -188,15 +192,15 @@ FareBreakdown calculateTaxiFare(const Trip& trip, RideType type) {
         fare.chargedKm = 0;
     }
     fare.chargedMinutes = trip.durationMin * waitingShare(trip.traffic);
-    fare.distanceCharge = fare.chargedKm * fare.ratePerKm;
-    fare.timeCharge     = fare.chargedMinutes * fare.ratePerMin;
+    fare.distanceCharge = roundToSen(fare.chargedKm * fare.ratePerKm);
+    fare.timeCharge     = roundToSen(fare.chargedMinutes * fare.ratePerMin);
 
     double meterFare = fare.baseFare + fare.distanceCharge + fare.timeCharge;
 
     // Taxis charge 50% extra between midnight and 6am
     switch (getTimeBand(trip.pickupHour)) {
         case MIDNIGHT:
-            fare.surgeOrSurcharge = meterFare * MIDNIGHT_SURCHARGE_RATE;
+            fare.surgeOrSurcharge = roundToSen(meterFare * MIDNIGHT_SURCHARGE_RATE);
             break;
         case PEAK:
         case OFF_PEAK:
