@@ -4,7 +4,9 @@
 
 #include <cctype>
 #include <cstdlib>
+#include <iomanip>
 #include <iostream>
+#include <sstream>
 #include <string>
 
 #include "fare_calculator.h"
@@ -89,6 +91,69 @@ bool readYesNo(const string& prompt) {
     }
 }
 
+// ---------------------------------------------------------------
+// Output helpers
+// ---------------------------------------------------------------
+
+void printDivider() {
+    cout << "  ------------------------------------------------------\n";
+}
+
+// Prints one line of a receipt, e.g. "Base fare ........ RM   2.00"
+void printMoneyLine(const string& label, double amount) {
+    cout << "  " << left << setw(42) << label << right;
+    if (amount < 0) {
+        cout << "-RM" << setw(8) << fixed << setprecision(2) << -amount << "\n";
+    } else {
+        cout << " RM" << setw(8) << fixed << setprecision(2) << amount << "\n";
+    }
+}
+
+// Formats a number with a fixed number of decimal places for use inside labels
+string formatNumber(double value, int decimals = 2) {
+    ostringstream text;
+    text << fixed << setprecision(decimals) << value;
+    return text.str();
+}
+
+// Prints the full breakdown of one fare
+void printFareBreakdown(const FareBreakdown& fare) {
+    cout << "\n";
+    printDivider();
+    cout << "  FARE BREAKDOWN - " << rideTypeName(fare.rideType) << "\n";
+    printDivider();
+    printMoneyLine("Base fare", fare.baseFare);
+    printMoneyLine("Distance  " + formatNumber(fare.chargedKm) + " km x RM" + formatNumber(fare.ratePerKm),
+                   fare.distanceCharge);
+    printMoneyLine("Time      " + formatNumber(fare.chargedMinutes, 1) + " min x RM" + formatNumber(fare.ratePerMin),
+                   fare.timeCharge);
+    if (fare.minimumFareApplied) {
+        cout << "  (Minimum fare applied)\n";
+    }
+    printDivider();
+    printMoneyLine("TOTAL", fare.total);
+    printDivider();
+}
+
+// ---------------------------------------------------------------
+// Menu option 1: estimate a Grab fare
+// ---------------------------------------------------------------
+void estimateGrabFare() {
+    cout << "\n--- ESTIMATE A GRAB RIDE FARE ---\n";
+    Trip trip;
+    trip.distanceKm  = readDouble("Trip distance in km (0.5 - 300): ", 0.5, 300.0);
+    trip.durationMin = readInt("Estimated trip time in minutes (1 - 600): ", 1, 600);
+
+    cout << "Ride type:\n";
+    cout << "  1. GrabCar          (standard 4-seater)\n";
+    cout << "  2. GrabCar Premium  (newer, higher-end car)\n";
+    int typeChoice = readInt("Choose ride type (1-2): ", 1, 2);
+    RideType type = (typeChoice == 1) ? GRABCAR : GRABCAR_PREMIUM;
+
+    FareBreakdown fare = calculateGrabFare(trip, type);
+    printFareBreakdown(fare);
+}
+
 void showBanner() {
     cout << "==============================================================\n";
     cout << "          GRAB FARE CALCULATOR  -  Klang Valley\n";
@@ -116,7 +181,7 @@ int main() {
 
         switch (choice) {
             case 1:
-                cout << "Grab fare estimate - coming soon.\n";
+                estimateGrabFare();
                 break;
             case 2:
                 cout << "Grab vs taxi comparison - coming soon.\n";
