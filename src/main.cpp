@@ -123,11 +123,19 @@ void printFareBreakdown(const FareBreakdown& fare) {
     printDivider();
     cout << "  FARE BREAKDOWN - " << rideTypeName(fare.rideType) << "\n";
     printDivider();
-    printMoneyLine("Base fare", fare.baseFare);
-    printMoneyLine("Distance  " + formatNumber(fare.chargedKm) + " km x RM" + formatNumber(fare.ratePerKm),
-                   fare.distanceCharge);
-    printMoneyLine("Time      " + formatNumber(fare.chargedMinutes, 1) + " min x RM" + formatNumber(fare.ratePerMin),
-                   fare.timeCharge);
+    if (isTaxi(fare.rideType)) {
+        printMoneyLine("Flag fall (includes first 1 km)", fare.baseFare);
+        printMoneyLine("Distance  " + formatNumber(fare.chargedKm) + " km x RM" + formatNumber(fare.ratePerKm),
+                       fare.distanceCharge);
+        printMoneyLine("Waiting   " + formatNumber(fare.chargedMinutes, 1) + " min x RM" + formatNumber(fare.ratePerMin),
+                       fare.timeCharge);
+    } else {
+        printMoneyLine("Base fare", fare.baseFare);
+        printMoneyLine("Distance  " + formatNumber(fare.chargedKm) + " km x RM" + formatNumber(fare.ratePerKm),
+                       fare.distanceCharge);
+        printMoneyLine("Time      " + formatNumber(fare.chargedMinutes, 1) + " min x RM" + formatNumber(fare.ratePerMin),
+                       fare.timeCharge);
+    }
     if (fare.surgeOrSurcharge > 0) {
         printMoneyLine("Demand surge", fare.surgeOrSurcharge);
     }
