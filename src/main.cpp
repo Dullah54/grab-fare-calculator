@@ -155,21 +155,41 @@ void printFareBreakdown(const FareBreakdown& fare) {
 }
 
 // ---------------------------------------------------------------
-// Menu option 1: estimate a Grab fare
+// Trip questions shared by menu options 1 and 2
 // ---------------------------------------------------------------
-void estimateGrabFare() {
-    cout << "\n--- ESTIMATE A GRAB RIDE FARE ---\n";
-    Trip trip;
+
+// Distance, time and pickup hour
+void readTripBasics(Trip& trip) {
     trip.distanceKm  = readDouble("Trip distance in km (0.5 - 300): ", 0.5, 300.0);
     trip.durationMin = readInt("Estimated trip time in minutes (1 - 600): ", 1, 600);
     trip.pickupHour  = readInt("Pickup hour in 24-hour time (0 - 23, e.g. 8 = 8am, 18 = 6pm): ", 0, 23);
     cout << "  -> Time band: " << timeBandName(getTimeBand(trip.pickupHour)) << "\n";
+}
 
+void readDemandLevel(Trip& trip) {
     cout << "How busy is it right now? (demand affects Grab's price)\n";
     cout << "  1. Normal\n";
     cout << "  2. High       (e.g. rush hour, events)  x" << formatNumber(SURGE_HIGH, 1) << "\n";
     cout << "  3. Very high  (e.g. heavy rain)         x" << formatNumber(SURGE_VERY_HIGH, 1) << "\n";
     trip.demand = static_cast<DemandLevel>(readInt("Choose demand level (1-3): ", 1, 3));
+}
+
+void readTrafficLevel(Trip& trip) {
+    cout << "How is the traffic? (a taxi meter charges waiting time in slow traffic)\n";
+    cout << "  1. Light\n";
+    cout << "  2. Moderate\n";
+    cout << "  3. Heavy\n";
+    trip.traffic = static_cast<TrafficLevel>(readInt("Choose traffic level (1-3): ", 1, 3));
+}
+
+// ---------------------------------------------------------------
+// Menu option 1: estimate a Grab fare
+// ---------------------------------------------------------------
+void estimateGrabFare() {
+    cout << "\n--- ESTIMATE A GRAB RIDE FARE ---\n";
+    Trip trip;
+    readTripBasics(trip);
+    readDemandLevel(trip);
 
     cout << "Ride type:\n";
     cout << "  1. GrabCar          (standard 4-seater)\n";
@@ -179,6 +199,72 @@ void estimateGrabFare() {
 
     FareBreakdown fare = calculateGrabFare(trip, type);
     printFareBreakdown(fare);
+}
+
+// ---------------------------------------------------------------
+// Menu option 2: compare Grab with a traditional taxi
+// ---------------------------------------------------------------
+void compareGrabWithTaxi() {
+    cout << "\n--- COMPARE GRAB WITH A TRADITIONAL TAXI ---\n";
+    Trip trip;
+    readTripBasics(trip);
+    readTrafficLevel(trip);
+    readDemandLevel(trip);
+    trip.bookedByPhone = readYesNo("Would you book the taxi by phone? (y/n): ");
+
+    const int OPTION_COUNT = 4;
+    FareBreakdown fares[OPTION_COUNT] = {
+        calculateGrabFare(trip, GRABCAR),
+        calculateGrabFare(trip, GRABCAR_PREMIUM),
+        calculateTaxiFare(trip, BUDGET_TAXI),
+        calculateTaxiFare(trip, TEKSI_1MALAYSIA)
+    };
+
+    // Find the cheapest option
+    int cheapest = 0;
+    for (int i = 1; i < OPTION_COUNT; i++) {
+        if (fares[i].total < fares[cheapest].total) {
+            cheapest = i;
+        }
+    }
+
+    cout << "\n";
+    printDivider();
+    cout << "  " << left << setw(20) << "Ride option" << setw(14) << "Estimated fare" << "  Pricing\n";
+    printDivider();
+    for (int i = 0; i < OPTION_COUNT; i++) {
+        string pricing = isTaxi(fares[i].rideType) ? "meter (known at the end)" : "upfront (known before booking)";
+        cout << "  " << left << setw(20) << rideTypeName(fares[i].rideType)
+             << "RM" << right << setw(8) << formatNumber(fares[i].total) << "    " << pricing;
+        if (i == cheapest) {
+            cout << "  <- cheapest";
+        }
+        cout << "\n";
+    }
+    printDivider();
+
+    // Compare the everyday choices: GrabCar vs a budget taxi
+    double grabFare = fares[0].total;
+    double taxiFare = fares[2].total;
+    double difference = taxiFare - grabFare;
+    if (difference > 0) {
+        cout << "  GrabCar saves you RM" << formatNumber(difference) << " ("
+             << formatNumber(difference / taxiFare * 100, 0) << "%) compared with a budget taxi.\n";
+    } else if (difference < 0) {
+        cout << "  A budget taxi is RM" << formatNumber(-difference) << " cheaper this time";
+        if (trip.demand != NORMAL_DEMAND) {
+            cout << " because of Grab's surge pricing";
+        }
+        cout << ".\n";
+    } else {
+        cout << "  GrabCar and a budget taxi cost the same for this trip.\n";
+    }
+
+    if (readYesNo("\nShow the full breakdown for each option? (y/n): ")) {
+        for (int i = 0; i < OPTION_COUNT; i++) {
+            printFareBreakdown(fares[i]);
+        }
+    }
 }
 
 void showBanner() {
@@ -211,7 +297,7 @@ int main() {
                 estimateGrabFare();
                 break;
             case 2:
-                cout << "Grab vs taxi comparison - coming soon.\n";
+                compareGrabWithTaxi();
                 break;
             case 3:
                 cout << "Rate card - coming soon.\n";
