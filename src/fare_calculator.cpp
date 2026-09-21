@@ -48,7 +48,7 @@ double promoDiscount(const std::string& code, double fare) {
         discount = 5.00;
     }
 
-    // A discount can never make the ride free or negative
+    // A discount can never be bigger than the fare, so the total is never negative
     if (discount > fare) {
         discount = fare;
     }
