@@ -8,10 +8,19 @@
 #include <iostream>
 #include <sstream>
 #include <string>
+#include <vector>
 
 #include "fare_calculator.h"
 
 using namespace std;
+
+// One entry in this session's trip history
+struct TripRecord {
+    string description;     // e.g. "GrabCar, 12.50 km, 25 min"
+    double fare;            // the fare shown to the user
+    double savingVsTaxi;    // comparisons only: budget taxi fare minus GrabCar fare
+    bool isComparison;
+};
 
 // ---------------------------------------------------------------
 // Input helpers
@@ -195,7 +204,7 @@ void readTrafficLevel(Trip& trip) {
 // ---------------------------------------------------------------
 // Menu option 1: estimate a Grab fare
 // ---------------------------------------------------------------
-void estimateGrabFare() {
+void estimateGrabFare(vector<TripRecord>& history) {
     cout << "\n--- ESTIMATE A GRAB RIDE FARE ---\n";
     Trip trip;
     readTripBasics(trip);
@@ -227,12 +236,20 @@ void estimateGrabFare() {
         cout << "  Promo code " << toUpperCase(trip.promoCode) << " applied.\n";
     }
     cout << "  This is an upfront price: it will not change because of traffic.\n";
+
+    TripRecord record;
+    record.description = rideTypeName(type) + ", " + formatNumber(trip.distanceKm) + " km, "
+                         + to_string(trip.durationMin) + " min";
+    record.fare = fare.total;
+    record.savingVsTaxi = 0.0;
+    record.isComparison = false;
+    history.push_back(record);
 }
 
 // ---------------------------------------------------------------
 // Menu option 2: compare Grab with a traditional taxi
 // ---------------------------------------------------------------
-void compareGrabWithTaxi() {
+void compareGrabWithTaxi(vector<TripRecord>& history) {
     cout << "\n--- COMPARE GRAB WITH A TRADITIONAL TAXI ---\n";
     Trip trip;
     readTripBasics(trip);
@@ -291,6 +308,60 @@ void compareGrabWithTaxi() {
     if (readYesNo("\nShow the full breakdown for each option? (y/n): ")) {
         for (int i = 0; i < OPTION_COUNT; i++) {
             printFareBreakdown(fares[i]);
+        }
+    }
+
+    TripRecord record;
+    record.description = "Comparison, " + formatNumber(trip.distanceKm) + " km, "
+                         + to_string(trip.durationMin) + " min (cheapest: "
+                         + rideTypeName(fares[cheapest].rideType) + ")";
+    record.fare = fares[cheapest].total;
+    record.savingVsTaxi = difference;
+    record.isComparison = true;
+    history.push_back(record);
+}
+
+// ---------------------------------------------------------------
+// Menu option 5 and exit: trip history for this session
+// ---------------------------------------------------------------
+void showTripHistory(const vector<TripRecord>& history) {
+    cout << "\n--- TRIP HISTORY (this session) ---\n";
+    if (history.empty()) {
+        cout << "  No trips yet. Try option 1 or 2 first.\n";
+        return;
+    }
+    for (size_t i = 0; i < history.size(); i++) {
+        cout << "  " << (i + 1) << ". " << left << setw(52) << history[i].description
+             << right << "RM" << setw(8) << formatNumber(history[i].fare) << "\n";
+    }
+}
+
+void showSessionSummary(const vector<TripRecord>& history) {
+    if (history.empty()) {
+        return;
+    }
+    int comparisons = 0;
+    double totalSaving = 0.0;
+    for (const TripRecord& record : history) {
+        if (record.isComparison) {
+            comparisons++;
+            totalSaving += record.savingVsTaxi;
+        }
+    }
+
+    cout << "\n--- SESSION SUMMARY ---\n";
+    cout << "  Trips estimated: " << history.size() << " (" << comparisons << " comparison";
+    if (comparisons != 1) {
+        cout << "s";
+    }
+    cout << ")\n";
+    if (comparisons > 0) {
+        if (totalSaving >= 0) {
+            cout << "  Choosing GrabCar instead of a budget taxi would save you RM"
+                 << formatNumber(totalSaving) << " in total.\n";
+        } else {
+            cout << "  A budget taxi would have cost RM" << formatNumber(-totalSaving)
+                 << " less in total for these trips.\n";
         }
     }
 }
@@ -376,6 +447,7 @@ void showMenu() {
 int main() {
     showBanner();
 
+    vector<TripRecord> history;
     int choice = -1;
     while (choice != 0) {
         showMenu();
@@ -383,10 +455,10 @@ int main() {
 
         switch (choice) {
             case 1:
-                estimateGrabFare();
+                estimateGrabFare(history);
                 break;
             case 2:
-                compareGrabWithTaxi();
+                compareGrabWithTaxi(history);
                 break;
             case 3:
                 showRateCard();
@@ -395,10 +467,11 @@ int main() {
                 showDisruptionSummary();
                 break;
             case 5:
-                cout << "Trip history - coming soon.\n";
+                showTripHistory(history);
                 break;
             case 0:
-                cout << "Thank you for using the Grab Fare Calculator.\n";
+                showSessionSummary(history);
+                cout << "\nThank you for using the Grab Fare Calculator.\n";
                 break;
             default:
                 cout << "Invalid choice. Please enter a number from 0 to 5.\n";
