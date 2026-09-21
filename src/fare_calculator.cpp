@@ -99,3 +99,64 @@ FareBreakdown calculateGrabFare(const Trip& trip, RideType type) {
     fare.total = roundToSen(rideFare);
     return fare;
 }
+
+// True for the two taxi ride types
+bool isTaxi(RideType type) {
+    return type == BUDGET_TAXI || type == TEKSI_1MALAYSIA;
+}
+
+// A taxi meter only charges for time while the taxi is stuck or moving slowly,
+// so we charge waiting time for part of the trip depending on the traffic
+double waitingShare(TrafficLevel traffic) {
+    switch (traffic) {
+        case LIGHT_TRAFFIC: return WAITING_SHARE_LIGHT;
+        case HEAVY_TRAFFIC: return WAITING_SHARE_HEAVY;
+        default:            return WAITING_SHARE_MODERATE;
+    }
+}
+
+// Taxi fare = flag fall (covers the first km) + extra km + waiting time
+FareBreakdown calculateTaxiFare(const Trip& trip, RideType type) {
+    FareBreakdown fare;
+    fare.rideType = type;
+
+    if (type == TEKSI_1MALAYSIA) {
+        fare.baseFare   = TEKSI1M_FLAG_FALL;
+        fare.ratePerKm  = TEKSI1M_PER_KM;
+        fare.ratePerMin = TEKSI1M_PER_MIN;
+    } else {
+        fare.baseFare   = BUDGET_TAXI_FLAG_FALL;
+        fare.ratePerKm  = BUDGET_TAXI_PER_KM;
+        fare.ratePerMin = BUDGET_TAXI_PER_MIN;
+    }
+
+    // The flag fall already pays for the first kilometre
+    fare.chargedKm = trip.distanceKm - FLAG_FALL_COVERS_KM;
+    if (fare.chargedKm < 0) {
+        fare.chargedKm = 0;
+    }
+    fare.chargedMinutes = trip.durationMin * waitingShare(trip.traffic);
+    fare.distanceCharge = fare.chargedKm * fare.ratePerKm;
+    fare.timeCharge     = fare.chargedMinutes * fare.ratePerMin;
+
+    double meterFare = fare.baseFare + fare.distanceCharge + fare.timeCharge;
+
+    // Taxis charge 50% extra between midnight and 6am
+    switch (getTimeBand(trip.pickupHour)) {
+        case MIDNIGHT:
+            fare.surgeOrSurcharge = meterFare * MIDNIGHT_SURCHARGE_RATE;
+            break;
+        case PEAK:
+        case OFF_PEAK:
+            fare.surgeOrSurcharge = 0.0;
+            break;
+    }
+
+    // Booking a taxi by phone costs an extra RM2
+    if (trip.bookedByPhone) {
+        fare.bookingFee = PHONE_BOOKING_FEE;
+    }
+
+    fare.total = roundToSen(meterFare + fare.surgeOrSurcharge + fare.bookingFee);
+    return fare;
+}

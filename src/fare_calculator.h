@@ -103,5 +103,8 @@ TimeBand getTimeBand(int hour);
 std::string timeBandName(TimeBand band);
 double surgeMultiplier(DemandLevel demand);
 FareBreakdown calculateGrabFare(const Trip& trip, RideType type);
+bool isTaxi(RideType type);
+double waitingShare(TrafficLevel traffic);
+FareBreakdown calculateTaxiFare(const Trip& trip, RideType type);
 
 #endif
