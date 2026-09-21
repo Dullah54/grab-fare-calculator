@@ -413,7 +413,8 @@ void showDisruptionSummary() {
     cout << "customers switch to it.\n\n";
 
     cout << "  2012  MyTeksi launches in Kuala Lumpur - book a taxi safely from your phone\n";
-    cout << "  2014  GrabCar lets private car owners give rides, at lower prices\n";
+    cout << "  2014  GrabCar launches as a premium service using rental-company cars\n";
+    cout << "  2015  Private car owners start driving for GrabCar, at lower prices\n";
     cout << "  2016  Rebrands as Grab and adds cashless payment\n";
     cout << "  2017  Malaysia legalises e-hailing (27 July 2017)\n";
     cout << "  2018  Grab takes over Uber's Southeast Asia business\n";
