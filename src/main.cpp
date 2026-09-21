@@ -99,21 +99,22 @@ void printDivider() {
     cout << "  ------------------------------------------------------\n";
 }
 
-// Prints one line of a receipt, e.g. "Base fare ........ RM   2.00"
-void printMoneyLine(const string& label, double amount) {
-    cout << "  " << left << setw(42) << label << right;
-    if (amount < 0) {
-        cout << "-RM" << setw(8) << fixed << setprecision(2) << -amount << "\n";
-    } else {
-        cout << " RM" << setw(8) << fixed << setprecision(2) << amount << "\n";
-    }
-}
-
-// Formats a number with a fixed number of decimal places for use inside labels
+// Formats a number with a fixed number of decimal places.
+// Uses its own stream so cout's number format is never changed.
 string formatNumber(double value, int decimals = 2) {
     ostringstream text;
     text << fixed << setprecision(decimals) << value;
     return text.str();
+}
+
+// Prints one line of a receipt, e.g. "Base fare ........ RM   2.00"
+void printMoneyLine(const string& label, double amount) {
+    cout << "  " << left << setw(42) << label << right;
+    if (amount < 0) {
+        cout << "-RM" << setw(8) << formatNumber(-amount) << "\n";
+    } else {
+        cout << " RM" << setw(8) << formatNumber(amount) << "\n";
+    }
 }
 
 // Prints the full breakdown of one fare
@@ -127,6 +128,9 @@ void printFareBreakdown(const FareBreakdown& fare) {
                    fare.distanceCharge);
     printMoneyLine("Time      " + formatNumber(fare.chargedMinutes, 1) + " min x RM" + formatNumber(fare.ratePerMin),
                    fare.timeCharge);
+    if (fare.surgeOrSurcharge > 0) {
+        printMoneyLine("Demand surge", fare.surgeOrSurcharge);
+    }
     if (fare.minimumFareApplied) {
         cout << "  (Minimum fare applied)\n";
     }
@@ -143,6 +147,14 @@ void estimateGrabFare() {
     Trip trip;
     trip.distanceKm  = readDouble("Trip distance in km (0.5 - 300): ", 0.5, 300.0);
     trip.durationMin = readInt("Estimated trip time in minutes (1 - 600): ", 1, 600);
+    trip.pickupHour  = readInt("Pickup hour in 24-hour time (0 - 23, e.g. 8 = 8am, 18 = 6pm): ", 0, 23);
+    cout << "  -> Time band: " << timeBandName(getTimeBand(trip.pickupHour)) << "\n";
+
+    cout << "How busy is it right now? (demand affects Grab's price)\n";
+    cout << "  1. Normal\n";
+    cout << "  2. High       (e.g. rush hour, events)  x" << formatNumber(SURGE_HIGH, 1) << "\n";
+    cout << "  3. Very high  (e.g. heavy rain)         x" << formatNumber(SURGE_VERY_HIGH, 1) << "\n";
+    trip.demand = static_cast<DemandLevel>(readInt("Choose demand level (1-3): ", 1, 3));
 
     cout << "Ride type:\n";
     cout << "  1. GrabCar          (standard 4-seater)\n";

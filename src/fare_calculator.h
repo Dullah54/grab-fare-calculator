@@ -99,6 +99,9 @@ const double WAITING_SHARE_HEAVY     = 0.50;
 // ---------- Functions (fare_calculator.cpp) ----------
 double roundToSen(double amount);
 std::string rideTypeName(RideType type);
+TimeBand getTimeBand(int hour);
+std::string timeBandName(TimeBand band);
+double surgeMultiplier(DemandLevel demand);
 FareBreakdown calculateGrabFare(const Trip& trip, RideType type);
 
 #endif
