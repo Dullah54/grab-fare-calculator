@@ -330,9 +330,12 @@ void showTripHistory(const vector<TripRecord>& history) {
         cout << "  No trips yet. Try option 1 or 2 first.\n";
         return;
     }
+    // Wide enough for the longest description, e.g.
+    // "Comparison, 300.00 km, 600 min (cheapest: Teksi 1Malaysia)"
+    const int DESCRIPTION_WIDTH = 60;
     for (size_t i = 0; i < history.size(); i++) {
-        cout << "  " << (i + 1) << ". " << left << setw(52) << history[i].description
-             << right << "RM" << setw(8) << formatNumber(history[i].fare) << "\n";
+        cout << "  " << (i + 1) << ". " << left << setw(DESCRIPTION_WIDTH) << history[i].description
+             << " " << right << "RM" << setw(8) << formatNumber(history[i].fare) << "\n";
     }
 }
 
