@@ -149,6 +149,15 @@ void printFareBreakdown(const FareBreakdown& fare) {
     if (fare.minimumFareApplied) {
         cout << "  (Minimum fare applied)\n";
     }
+    if (fare.discount > 0) {
+        printMoneyLine("Promo discount", -fare.discount);
+    }
+    if (fare.toll > 0) {
+        printMoneyLine("Toll", fare.toll);
+    }
+    if (fare.roundingAdjustment != 0) {
+        printMoneyLine("Cash rounding (nearest 5 sen)", fare.roundingAdjustment);
+    }
     printDivider();
     printMoneyLine("TOTAL", fare.total);
     printDivider();
@@ -164,6 +173,7 @@ void readTripBasics(Trip& trip) {
     trip.durationMin = readInt("Estimated trip time in minutes (1 - 600): ", 1, 600);
     trip.pickupHour  = readInt("Pickup hour in 24-hour time (0 - 23, e.g. 8 = 8am, 18 = 6pm): ", 0, 23);
     cout << "  -> Time band: " << timeBandName(getTimeBand(trip.pickupHour)) << "\n";
+    trip.tollRM      = readDouble("Toll charges on the route in RM (0 if none): ", 0.0, 100.0);
 }
 
 void readDemandLevel(Trip& trip) {
@@ -197,8 +207,26 @@ void estimateGrabFare() {
     int typeChoice = readInt("Choose ride type (1-2): ", 1, 2);
     RideType type = (typeChoice == 1) ? GRABCAR : GRABCAR_PREMIUM;
 
+    // Promo code: keep asking until it is valid or left empty
+    while (true) {
+        trip.promoCode = trim(readLine("Promo code (try STUDENT10 or NEWRIDER, press Enter to skip): "));
+        if (trip.promoCode.empty() || isValidPromoCode(trip.promoCode)) {
+            break;
+        }
+        cout << "  ! Sorry, \"" << trip.promoCode << "\" is not a valid promo code.\n";
+    }
+
+    cout << "Payment method:\n";
+    cout << "  1. GrabPay / card  (cashless)\n";
+    cout << "  2. Cash            (rounded to the nearest 5 sen)\n";
+    trip.payment = static_cast<PaymentMethod>(readInt("Choose payment method (1-2): ", 1, 2));
+
     FareBreakdown fare = calculateGrabFare(trip, type);
     printFareBreakdown(fare);
+    if (!trip.promoCode.empty()) {
+        cout << "  Promo code " << toUpperCase(trip.promoCode) << " applied.\n";
+    }
+    cout << "  This is an upfront price: it will not change because of traffic.\n";
 }
 
 // ---------------------------------------------------------------

@@ -98,6 +98,11 @@ const double WAITING_SHARE_HEAVY     = 0.50;
 
 // ---------- Functions (fare_calculator.cpp) ----------
 double roundToSen(double amount);
+double roundToNearest5Sen(double amount);
+std::string toUpperCase(std::string text);
+bool isValidPromoCode(const std::string& code);
+double promoDiscount(const std::string& code, double fare);
+void finishFare(FareBreakdown& fare, double fareBeforeToll, const Trip& trip);
 std::string rideTypeName(RideType type);
 TimeBand getTimeBand(int hour);
 std::string timeBandName(TimeBand band);

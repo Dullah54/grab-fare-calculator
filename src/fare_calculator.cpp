@@ -4,11 +4,68 @@
 
 #include "fare_calculator.h"
 
+#include <cctype>
 #include <cmath>
 
 // Rounds a ringgit amount to 2 decimal places (the nearest sen)
 double roundToSen(double amount) {
     return std::round(amount * 100.0) / 100.0;
+}
+
+// Cash payments in Malaysia are rounded to the nearest 5 sen
+// (e.g. RM16.77 -> RM16.75, RM16.78 -> RM16.80)
+double roundToNearest5Sen(double amount) {
+    return std::round(amount * 20.0) / 20.0;
+}
+
+// Converts text to upper case so promo codes are not case-sensitive
+std::string toUpperCase(std::string text) {
+    for (char& c : text) {
+        c = static_cast<char>(std::toupper(static_cast<unsigned char>(c)));
+    }
+    return text;
+}
+
+// Sample promo codes used in this program (they are not real Grab codes):
+//   STUDENT10 - 10% off, up to RM5
+//   NEWRIDER  - RM5 off
+bool isValidPromoCode(const std::string& code) {
+    std::string upper = toUpperCase(code);
+    return upper == "STUDENT10" || upper == "NEWRIDER";
+}
+
+// Returns how much the promo code takes off the fare (0 if the code is not valid)
+double promoDiscount(const std::string& code, double fare) {
+    std::string upper = toUpperCase(code);
+    double discount = 0.0;
+
+    if (upper == "STUDENT10") {
+        discount = fare * 0.10;
+        if (discount > 5.00) {
+            discount = 5.00;
+        }
+    } else if (upper == "NEWRIDER") {
+        discount = 5.00;
+    }
+
+    // A discount can never make the ride free or negative
+    if (discount > fare) {
+        discount = fare;
+    }
+    return roundToSen(discount);
+}
+
+// Adds toll and applies cash rounding - the last step for every fare
+void finishFare(FareBreakdown& fare, double fareBeforeToll, const Trip& trip) {
+    fare.toll = trip.tollRM;
+    double total = roundToSen(fareBeforeToll + fare.toll);
+
+    if (trip.payment == CASH) {
+        double rounded = roundToNearest5Sen(total);
+        fare.roundingAdjustment = roundToSen(rounded - total);
+        total = rounded;
+    }
+    fare.total = total;
 }
 
 // Returns a readable name for a ride type
@@ -96,7 +153,11 @@ FareBreakdown calculateGrabFare(const Trip& trip, RideType type) {
         fare.minimumFareApplied = true;
     }
 
-    fare.total = roundToSen(rideFare);
+    // Promo codes only apply to Grab rides
+    fare.discount = promoDiscount(trip.promoCode, rideFare);
+    rideFare -= fare.discount;
+
+    finishFare(fare, rideFare, trip);
     return fare;
 }
 
@@ -157,6 +218,6 @@ FareBreakdown calculateTaxiFare(const Trip& trip, RideType type) {
         fare.bookingFee = PHONE_BOOKING_FEE;
     }
 
-    fare.total = roundToSen(meterFare + fare.surgeOrSurcharge + fare.bookingFee);
+    finishFare(fare, meterFare + fare.surgeOrSurcharge + fare.bookingFee, trip);
     return fare;
 }
