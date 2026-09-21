@@ -1,0 +1,9 @@
+# Build output
+*.exe
+*.o
+*.obj
+build/
+
+# Editor files
+.vscode/
+*.swp
