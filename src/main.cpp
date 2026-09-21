@@ -295,6 +295,67 @@ void compareGrabWithTaxi() {
     }
 }
 
+// ---------------------------------------------------------------
+// Menu option 3: rate card
+// ---------------------------------------------------------------
+void showRateCard() {
+    cout << "\n--- RATE CARD (Klang Valley) ---\n\n";
+    cout << "  GRAB - upfront price     Base     Per km   Per min  Minimum\n";
+    cout << "  GrabCar (off-peak)       " << setw(4) << formatNumber(GRABCAR_BASE) << "     "
+         << formatNumber(GRABCAR_PER_KM) << "     " << formatNumber(GRABCAR_PER_MIN) << "     "
+         << formatNumber(GRABCAR_MINIMUM) << "\n";
+    cout << "  GrabCar (peak hours)     " << setw(4) << formatNumber(GRABCAR_BASE) << "     "
+         << formatNumber(GRABCAR_PEAK_PER_KM) << "     " << formatNumber(GRABCAR_PEAK_PER_MIN) << "     "
+         << formatNumber(GRABCAR_MINIMUM) << "\n";
+    cout << "  GrabCar Premium          " << setw(4) << formatNumber(PREMIUM_BASE) << "     "
+         << formatNumber(PREMIUM_PER_KM) << "     " << formatNumber(PREMIUM_PER_MIN) << "    "
+         << formatNumber(PREMIUM_MINIMUM) << "\n";
+    cout << "  Demand surge: normal x" << formatNumber(SURGE_NORMAL, 1)
+         << ", high x" << formatNumber(SURGE_HIGH, 1)
+         << ", very high x" << formatNumber(SURGE_VERY_HIGH, 1) << "\n";
+    cout << "  Peak hours: 7:00-9:59am and 5:00-7:59pm\n\n";
+
+    cout << "  TAXI - meter             Flag fall  Per km   Per min (waiting)\n";
+    cout << "  Budget taxi              " << formatNumber(BUDGET_TAXI_FLAG_FALL) << "       "
+         << formatNumber(BUDGET_TAXI_PER_KM) << "     " << formatNumber(BUDGET_TAXI_PER_MIN) << "\n";
+    cout << "  Teksi 1Malaysia          " << formatNumber(TEKSI1M_FLAG_FALL) << "       "
+         << formatNumber(TEKSI1M_PER_KM) << "     " << formatNumber(TEKSI1M_PER_MIN) << "\n";
+    cout << "  Flag fall includes the first 1 km. Midnight surcharge +50% (12am-6am).\n";
+    cout << "  Phone booking fee RM" << formatNumber(PHONE_BOOKING_FEE) << ".\n\n";
+
+    cout << "  Sources: RinggitPlus (2023) for Grab rates; SPAD rates reported by\n";
+    cout << "  The Edge Malaysia (2015) for taxis. Surge levels are simplified.\n";
+}
+
+// ---------------------------------------------------------------
+// Menu option 4: link back to Part 1 (the innovation poster)
+// ---------------------------------------------------------------
+void showDisruptionSummary() {
+    cout << "\n--- WHY DID GRAB DISRUPT TAXIS? ---\n";
+    cout << "Christensen's disruptive innovation model: a small newcomer first serves\n";
+    cout << "customers the big players overlook, then keeps improving until mainstream\n";
+    cout << "customers switch to it.\n\n";
+
+    cout << "  2012  MyTeksi launches in Kuala Lumpur - book a taxi safely from your phone\n";
+    cout << "  2014  GrabCar lets private car owners give rides, at lower prices\n";
+    cout << "  2016  Rebrands as Grab and adds cashless payment\n";
+    cout << "  2017  Malaysia legalises e-hailing (27 July 2017)\n";
+    cout << "  2018  Grab takes over Uber's Southeast Asia business\n";
+    cout << "  2019  E-hailing drivers now need a PSV licence and an EVP permit\n";
+    cout << "  2021  Grab lists on Nasdaq (ticker: GRAB)\n";
+    cout << "  2023  Grab-led GXBank becomes Malaysia's first digital bank to launch\n\n";
+
+    cout << "What passengers got that most taxis did not offer:\n";
+    cout << "  - an upfront price before the trip (no meter surprises)\n";
+    cout << "  - the driver's name, car plate and live GPS tracking\n";
+    cout << "  - rides in places and at times when taxis were hard to find\n";
+    cout << "  - cashless payment\n\n";
+
+    cout << "Impact: taxis on Malaysian roads fell from about 120,000 to about 40,000\n";
+    cout << "(Gabungan Teksi Malaysia, reported in 2024).\n";
+    cout << "Try option 2 to see the price difference for yourself.\n";
+}
+
 void showBanner() {
     cout << "==============================================================\n";
     cout << "          GRAB FARE CALCULATOR  -  Klang Valley\n";
@@ -328,10 +389,10 @@ int main() {
                 compareGrabWithTaxi();
                 break;
             case 3:
-                cout << "Rate card - coming soon.\n";
+                showRateCard();
                 break;
             case 4:
-                cout << "Part 1 summary - coming soon.\n";
+                showDisruptionSummary();
                 break;
             case 5:
                 cout << "Trip history - coming soon.\n";
