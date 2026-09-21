@@ -140,6 +140,23 @@ FareBreakdown calculateTaxiFare(const Trip& trip, RideType type) {
     fare.timeCharge     = fare.chargedMinutes * fare.ratePerMin;
 
     double meterFare = fare.baseFare + fare.distanceCharge + fare.timeCharge;
-    fare.total = roundToSen(meterFare);
+
+    // Taxis charge 50% extra between midnight and 6am
+    switch (getTimeBand(trip.pickupHour)) {
+        case MIDNIGHT:
+            fare.surgeOrSurcharge = meterFare * MIDNIGHT_SURCHARGE_RATE;
+            break;
+        case PEAK:
+        case OFF_PEAK:
+            fare.surgeOrSurcharge = 0.0;
+            break;
+    }
+
+    // Booking a taxi by phone costs an extra RM2
+    if (trip.bookedByPhone) {
+        fare.bookingFee = PHONE_BOOKING_FEE;
+    }
+
+    fare.total = roundToSen(meterFare + fare.surgeOrSurcharge + fare.bookingFee);
     return fare;
 }

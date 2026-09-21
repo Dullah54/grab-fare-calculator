@@ -137,7 +137,14 @@ void printFareBreakdown(const FareBreakdown& fare) {
                        fare.timeCharge);
     }
     if (fare.surgeOrSurcharge > 0) {
-        printMoneyLine("Demand surge", fare.surgeOrSurcharge);
+        if (isTaxi(fare.rideType)) {
+            printMoneyLine("Midnight surcharge (+50%)", fare.surgeOrSurcharge);
+        } else {
+            printMoneyLine("Demand surge", fare.surgeOrSurcharge);
+        }
+    }
+    if (fare.bookingFee > 0) {
+        printMoneyLine("Phone booking fee", fare.bookingFee);
     }
     if (fare.minimumFareApplied) {
         cout << "  (Minimum fare applied)\n";
