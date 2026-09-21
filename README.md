@@ -16,7 +16,7 @@ program estimates the Grab fare and compares it with a traditional metered taxi.
 
 | Menu | Feature |
 |---|---|
-| 1 | Estimate a GrabCar or GrabCar Premium fare, with peak-hour rates, demand surge, promo codes, toll and cash rounding |
+| 1 | Estimate a GrabCar or GrabCar Premium fare, with demand surge, promo codes, toll and cash rounding |
 | 2 | Compare GrabCar, GrabCar Premium, a budget taxi and Teksi 1Malaysia for the same trip and show the cheapest |
 | 3 | Rate card with every rate the program uses |
 | 4 | Short summary of Grab's disruption of the taxi industry (links to our Part 1 poster) |
@@ -53,7 +53,7 @@ g++ -std=c++17 -Wall -Wextra -Isrc -o run_tests tests/test_fare_calculator.cpp s
 ./run_tests
 ```
 
-35 automated tests check the fare calculations (35 of 35 pass). The manual tests for invalid input
+38 automated tests check the fare calculations (38 of 38 pass). The manual tests for invalid input
 are listed in [docs/test_cases.md](docs/test_cases.md).
 
 ## Sample run
@@ -90,9 +90,19 @@ build.bat                 Windows build script
 
 ## About the rates
 
-The rates are simplified for learning purposes and are not official Grab or taxi prices.
+The program uses published rates, simplified for learning purposes. They are not official Grab
+or taxi price quotes.
 
-- GrabCar base fare, per-km and per-minute rates, and the January 2023 peak-hour change:
-  RinggitPlus (Cheong, 2023).
-- Budget taxi and Teksi 1Malaysia meter rates set by SPAD in 2015: The Edge Malaysia (2015).
-- The promo codes STUDENT10 and NEWRIDER are made up for this program.
+- GrabCar: RM2 base, RM0.25/km, RM0.43/min, RM5 minimum in the Klang Valley since 16 January 2023.
+  Yeoh, A. (2023, January 16). Grab updates fare structure, rides during peak hours to cost more.
+  *The Star*. https://www.thestar.com.my/tech/tech-news/2023/01/16/grab-updates-fee-structure-rides-during-peak-hours-to-cost-more
+- GrabCar Premium: TaxiFareFinder. (n.d.). *GrabCar Premium price estimator & cost calculator: Kuala Lumpur,
+  Malaysia*. https://www.taxifarefinder.com/main.php?city=GrabCar-Premium-Kuala-Lumpur-Malaysia
+- Grab's peak hours (7-9am, 5-8pm): Dzafri, D. (2023, January 17). Grab Malaysia raises fare prices per
+  minute. This is why. *SoyaCincau*. https://soyacincau.com/2023/01/17/grab-malaysia-raises-fare-prices-per-minute-this-is-why/
+- Budget taxi and Teksi 1Malaysia meter rates set by SPAD in 2015: Meng, Y. C., Lee, P., & Gasper, D. T.
+  (2015, March 20), *The Star*; The Edge Malaysia (2015, March 19).
+- Midnight surcharge and phone booking fee: klia2.info (2015). Useful tips on using Malaysian taxi services.
+- Cash rounding: Bank Negara Malaysia. (n.d.). *About the rounding mechanism*.
+- Our own simplifications: the surge levels (x1.3, x1.6), the share of taxi time charged as waiting
+  time, and the promo codes STUDENT10 and NEWRIDER.

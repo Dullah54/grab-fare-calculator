@@ -2,21 +2,21 @@
 
 ## 1. Automated tests (`tests/test_fare_calculator.cpp`)
 
-35 tests check the fare functions against answers worked out by hand. Result: **35 of 35 passed**.
+38 tests check the fare functions against answers worked out by hand. Result: **38 of 38 passed**.
 
 | Area | What is tested | Example | Expected |
 |---|---|---|---|
-| Time bands | 12am, 5am, 6am, 8am, 12pm, 6pm, 8pm | 8am | Peak |
-| Grab fare | off-peak 10 km, 20 min | 2.00 + 7.00 + 4.00 | RM13.00 |
-| Grab fare | peak 10 km, 20 min | 2.00 + 2.50 + 8.60 | RM13.10 |
-| Minimum fare | GrabCar 1 km, 3 min | 3.30 is below minimum | RM5.00 |
-| Surge | high demand x1.3 on RM13.00 | 13.00 x 1.3 | RM16.90 |
+| Time bands | 12am, 5am, 6am, 8am, 9am, 12pm, 6pm, 7pm, 8pm | 8am | Peak |
+| Grab fare | 10 km, 20 min (same at 2pm and 8am) | 2.00 + 2.50 + 8.60 | RM13.10 |
+| Traffic jam | 10 km, 45 min | 2.00 + 2.50 + 19.35 | RM23.85 |
+| Minimum fare | GrabCar 1 km, 3 min | 3.54 is below minimum | RM5.00 |
+| Surge | high demand x1.3 on RM13.10 | 13.10 x 1.3 | RM17.03 |
 | Premium | 10 km, 20 min | 4.00 + 15.00 + 10.00 | RM29.00 |
-| Promo | STUDENT10 on RM15.75 | 10% | RM1.58 off |
+| Promo | STUDENT10 on RM15.875 | 10% | RM1.59 off |
 | Promo | STUDENT10 on RM80 | capped | RM5.00 off |
 | Promo | invalid code FREE | rejected | RM0.00 off |
-| Toll | RM2.10 toll on RM13.00 | 13.00 + 2.10 | RM15.10 |
-| Cash rounding | RM16.27 paid in cash | nearest 5 sen | RM16.25 |
+| Toll | RM2.10 toll on RM13.10 | 13.10 + 2.10 | RM15.20 |
+| Cash rounding | RM16.39 paid in cash | nearest 5 sen | RM16.40 |
 | Budget taxi | 10 km, 20 min, moderate traffic | 3.00 + 11.25 + 2.52 | RM16.77 |
 | Teksi 1Malaysia | 10 km, 20 min | 4.00 + 13.50 + 3.00 | RM20.50 |
 | Midnight | budget taxi at 2am | 16.77 x 1.5 | RM25.16 |

@@ -41,14 +41,16 @@ never lower than the minimum fare, then minus promo discount, plus toll.
 
 | | Base | Per km | Per minute | Minimum |
 |---|---|---|---|---|
-| GrabCar (off-peak) | RM2.00 | RM0.70 | RM0.20 | RM5.00 |
-| GrabCar (peak hours) | RM2.00 | RM0.25 | RM0.43 | RM5.00 |
+| GrabCar | RM2.00 | RM0.25 | RM0.43 | RM5.00 |
 | GrabCar Premium | RM4.00 | RM1.50 | RM0.50 | RM15.00 |
 
-- GrabCar rates and the January 2023 peak-hour change: RinggitPlus (Cheong, 2023).
-- Premium rates are estimates from public fare estimators.
+- GrabCar rates in the Klang Valley since 16 January 2023 (before that RM0.70/km and RM0.20/min).
+  They apply all day; peak-hour trips cost more because they take longer (Yeoh, 2023, The Star).
+- GrabCar Premium rates: TaxiFareFinder GrabCar Premium estimator for Kuala Lumpur.
 - Demand multiplier (dynamic pricing) is simplified for this program: normal x1.0, high x1.3, very high x1.6.
-- Peak hours used in this program: 7:00-9:59am and 5:00-7:59pm.
+  Grab does not publish its surge levels.
+- Grab's listed peak hours are 7-9am and 5-8pm (Dzafri, 2023, SoyaCincau). The program shows a
+  traffic note for these hours.
 
 ### Traditional taxi (metered)
 
@@ -60,17 +62,20 @@ plus 50% between 12:00am and 5:59am, plus RM2 if booked by phone, plus toll.
 | Budget taxi | RM3.00 | RM1.25 | RM0.42 |
 | Teksi 1Malaysia | RM4.00 | RM1.50 | RM0.50 |
 
-- Klang Valley meter rates set by SPAD in 2015 (The Edge Malaysia, 2015).
+- Klang Valley meter rates set by SPAD in 2015; the RM3 flag fall covers the first kilometre
+  (Meng et al., 2015, The Star; The Edge Malaysia, 2015).
+- 50% midnight surcharge and RM2 phone booking fee (klia2.info, 2015).
 - A meter only charges time while the taxi is moving slowly, so the program charges waiting time for
-  part of the trip: 10% (light traffic), 30% (moderate) or 50% (heavy).
+  part of the trip: 10% (light traffic), 30% (moderate) or 50% (heavy). These shares are our assumption.
 
 ### Cash rounding
 
-Cash totals are rounded to the nearest 5 sen, following Bank Negara Malaysia's rounding mechanism.
+Cash totals are rounded to the nearest 5 sen, following Bank Negara Malaysia's rounding mechanism
+(in force since 1 April 2008).
 
 ## 5. Logic plan
 
 - `switch` on the main menu choice.
-- `switch` on the time band (off-peak, peak, midnight) to pick rates and surcharges.
+- `switch` on the time band (off-peak, peak, midnight) to add the taxi midnight surcharge.
 - `if / else` for ride types, minimum fare, promo codes, booking fee and the cheapest option.
 - Input helper functions that keep asking until the value is valid.

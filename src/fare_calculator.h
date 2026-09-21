@@ -20,7 +20,7 @@ enum RideType {
 // Time of day decides which rates and surcharges apply
 enum TimeBand {
     OFF_PEAK,
-    PEAK,       // 7:00-9:59am and 5:00-7:59pm
+    PEAK,       // Grab's listed peak hours: 7-9am and 5-8pm
     MIDNIGHT    // 12:00am-5:59am
 };
 
@@ -61,13 +61,14 @@ struct FareBreakdown {
 };
 
 // ---------- Grab rates (Klang Valley) ----------
+// Since 16 January 2023 GrabCar charges more per minute and less per km
+// (was RM0.20/min and RM0.70/km), so trips stuck in traffic cost more.
 const double GRABCAR_BASE            = 2.00;
-const double GRABCAR_PER_KM          = 0.70;
-const double GRABCAR_PER_MIN         = 0.20;
-const double GRABCAR_PEAK_PER_KM     = 0.25;   // peak-hour rates since January 2023
-const double GRABCAR_PEAK_PER_MIN    = 0.43;
+const double GRABCAR_PER_KM          = 0.25;
+const double GRABCAR_PER_MIN         = 0.43;
 const double GRABCAR_MINIMUM         = 5.00;
 
+// GrabCar Premium rates from the TaxiFareFinder estimator
 const double PREMIUM_BASE            = 4.00;
 const double PREMIUM_PER_KM          = 1.50;
 const double PREMIUM_PER_MIN         = 0.50;

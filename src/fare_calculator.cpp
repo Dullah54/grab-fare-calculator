@@ -79,11 +79,12 @@ std::string rideTypeName(RideType type) {
     return "Unknown";
 }
 
-// Works out the time band from the pickup hour (0-23)
+// Works out the time band from the pickup hour (0-23).
+// Peak hours are Grab's listed peak hours: 7-9am and 5-8pm.
 TimeBand getTimeBand(int hour) {
     if (hour >= 0 && hour <= 5) {
         return MIDNIGHT;
-    } else if ((hour >= 7 && hour <= 9) || (hour >= 17 && hour <= 19)) {
+    } else if ((hour >= 7 && hour <= 8) || (hour >= 17 && hour <= 19)) {
         return PEAK;
     }
     return OFF_PEAK;
@@ -119,22 +120,12 @@ FareBreakdown calculateGrabFare(const Trip& trip, RideType type) {
         fare.ratePerMin = PREMIUM_PER_MIN;
         minimumFare     = PREMIUM_MINIMUM;
     } else {
-        fare.baseFare = GRABCAR_BASE;
-        minimumFare   = GRABCAR_MINIMUM;
-
-        // Since January 2023 GrabCar charges more per minute and less per km
-        // during peak hours, because traffic jams make trips take longer
-        switch (getTimeBand(trip.pickupHour)) {
-            case PEAK:
-                fare.ratePerKm  = GRABCAR_PEAK_PER_KM;
-                fare.ratePerMin = GRABCAR_PEAK_PER_MIN;
-                break;
-            case OFF_PEAK:
-            case MIDNIGHT:
-                fare.ratePerKm  = GRABCAR_PER_KM;
-                fare.ratePerMin = GRABCAR_PER_MIN;
-                break;
-        }
+        // GrabCar uses the same rates all day; a trip in peak-hour traffic
+        // costs more because it takes more minutes
+        fare.baseFare   = GRABCAR_BASE;
+        fare.ratePerKm  = GRABCAR_PER_KM;
+        fare.ratePerMin = GRABCAR_PER_MIN;
+        minimumFare     = GRABCAR_MINIMUM;
     }
 
     fare.chargedKm      = trip.distanceKm;

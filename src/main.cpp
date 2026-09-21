@@ -182,6 +182,9 @@ void readTripBasics(Trip& trip) {
     trip.durationMin = readInt("Estimated trip time in minutes (1 - 600): ", 1, 600);
     trip.pickupHour  = readInt("Pickup hour in 24-hour time (0 - 23, e.g. 8 = 8am, 18 = 6pm): ", 0, 23);
     cout << "  -> Time band: " << timeBandName(getTimeBand(trip.pickupHour)) << "\n";
+    if (getTimeBand(trip.pickupHour) == PEAK) {
+        cout << "     Traffic is usually heavy now, so allow more minutes: GrabCar charges per minute.\n";
+    }
     trip.tollRM      = readDouble("Toll charges on the route in RM (0 if none): ", 0.0, 100.0);
 }
 
@@ -375,11 +378,8 @@ void showSessionSummary(const vector<TripRecord>& history) {
 void showRateCard() {
     cout << "\n--- RATE CARD (Klang Valley) ---\n\n";
     cout << "  GRAB - upfront price     Base     Per km   Per min  Minimum\n";
-    cout << "  GrabCar (off-peak)       " << setw(4) << formatNumber(GRABCAR_BASE) << "     "
+    cout << "  GrabCar                  " << setw(4) << formatNumber(GRABCAR_BASE) << "     "
          << formatNumber(GRABCAR_PER_KM) << "     " << formatNumber(GRABCAR_PER_MIN) << "     "
-         << formatNumber(GRABCAR_MINIMUM) << "\n";
-    cout << "  GrabCar (peak hours)     " << setw(4) << formatNumber(GRABCAR_BASE) << "     "
-         << formatNumber(GRABCAR_PEAK_PER_KM) << "     " << formatNumber(GRABCAR_PEAK_PER_MIN) << "     "
          << formatNumber(GRABCAR_MINIMUM) << "\n";
     cout << "  GrabCar Premium          " << setw(4) << formatNumber(PREMIUM_BASE) << "     "
          << formatNumber(PREMIUM_PER_KM) << "     " << formatNumber(PREMIUM_PER_MIN) << "    "
@@ -387,7 +387,8 @@ void showRateCard() {
     cout << "  Demand surge: normal x" << formatNumber(SURGE_NORMAL, 1)
          << ", high x" << formatNumber(SURGE_HIGH, 1)
          << ", very high x" << formatNumber(SURGE_VERY_HIGH, 1) << "\n";
-    cout << "  Peak hours: 7:00-9:59am and 5:00-7:59pm\n\n";
+    cout << "  GrabCar rates apply all day since January 2023. Grab's peak hours\n";
+    cout << "  (7-9am, 5-8pm) cost more because trips take longer in traffic.\n\n";
 
     cout << "  TAXI - meter             Flag fall  Per km   Per min (waiting)\n";
     cout << "  Budget taxi              " << formatNumber(BUDGET_TAXI_FLAG_FALL) << "       "
@@ -397,8 +398,9 @@ void showRateCard() {
     cout << "  Flag fall includes the first 1 km. Midnight surcharge +50% (12am-6am).\n";
     cout << "  Phone booking fee RM" << formatNumber(PHONE_BOOKING_FEE) << ".\n\n";
 
-    cout << "  Sources: RinggitPlus (2023) for Grab rates; SPAD rates reported by\n";
-    cout << "  The Edge Malaysia (2015) for taxis. Surge levels are simplified.\n";
+    cout << "  Sources: The Star (2023) for GrabCar; TaxiFareFinder for GrabCar Premium;\n";
+    cout << "  SPAD rates reported by The Star and The Edge (2015) for taxis.\n";
+    cout << "  Surge levels are simplified for this program.\n";
 }
 
 // ---------------------------------------------------------------
