@@ -53,7 +53,7 @@ g++ -std=c++17 -Wall -Wextra -Isrc -o run_tests tests/test_fare_calculator.cpp s
 ./run_tests
 ```
 
-41 automated tests check the fare calculations (41 of 41 pass). The manual tests for invalid input
+43 automated tests check the fare calculations (43 of 43 pass). The manual tests for invalid input
 are listed in [docs/test_cases.md](docs/test_cases.md).
 
 ## Sample run

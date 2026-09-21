@@ -58,9 +58,9 @@ double promoDiscount(const std::string& code, double fare) {
     return roundToSen(discount);
 }
 
-// Adds toll and applies cash rounding - the last step for every fare
+// Adds the toll (rounded to the sen) and applies cash rounding - the last step for every fare
 void finishFare(FareBreakdown& fare, double fareBeforeToll, const Trip& trip) {
-    fare.toll = trip.tollRM;
+    fare.toll = roundToSen(trip.tollRM);
     double total = roundToSen(fareBeforeToll + fare.toll);
 
     if (trip.payment == CASH) {

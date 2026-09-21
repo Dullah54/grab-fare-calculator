@@ -109,6 +109,14 @@ int main() {
     double receiptSum = cashFare.baseFare + cashFare.distanceCharge + cashFare.timeCharge + cashFare.surgeOrSurcharge
                         - cashFare.discount + cashFare.toll + cashFare.roundingAdjustment;
     checkMoney("Receipt lines add up to the total", receiptSum, cashFare.total);
+
+    Trip oddToll = makeTrip(10, 20, 14);                 // toll typed with 3 decimal places
+    oddToll.tollRM = 1.005;
+    oddToll.payment = CASH;
+    FareBreakdown oddFare = calculateGrabFare(oddToll, GRABCAR);
+    checkMoney("Toll RM1.005 is rounded to RM1.01", oddFare.toll, 1.01);
+    checkMoney("Receipt with that toll adds up (RM14.10)", oddFare.baseFare + oddFare.distanceCharge
+               + oddFare.timeCharge + oddFare.toll + oddFare.roundingAdjustment, oddFare.total);
     checkMoney("Half a sen rounds up: RM3.125 -> RM3.13", roundToSen(3.125), 3.13);
     checkMoney("Half a sen rounds up: RM8.385 -> RM8.39", roundToSen(8.385), 8.39);
     checkMoney("Round RM16.77 -> RM16.75", roundToNearest5Sen(16.77), 16.75);

@@ -2,7 +2,7 @@
 
 ## 1. Automated tests (`tests/test_fare_calculator.cpp`)
 
-41 tests check the fare functions against answers worked out by hand. Result: **41 of 41 passed**.
+43 tests check the fare functions against answers worked out by hand. Result: **43 of 43 passed**.
 
 | Area | What is tested | Example | Expected |
 |---|---|---|---|
@@ -18,6 +18,7 @@
 | Toll | RM2.10 toll on RM13.10 | 13.10 + 2.10 | RM15.20 |
 | Cash rounding | RM16.39 paid in cash | nearest 5 sen | RM16.40 |
 | Receipt | base + distance + time - discount + toll + rounding | adds up to the total | RM16.40 |
+| Toll rounding | RM1.005 toll on RM13.10, paid in cash | toll rounded to RM1.01, receipt adds up | RM14.10 |
 | Half-sen rounding | RM3.125 and RM8.385 | round up | RM3.13, RM8.39 |
 | Budget taxi | 10 km, 20 min, moderate traffic | 3.00 + 11.25 + 2.52 | RM16.77 |
 | Teksi 1Malaysia | 10 km, 20 min | 4.00 + 13.50 + 3.00 | RM20.50 |
