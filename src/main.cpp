@@ -398,8 +398,9 @@ void showRateCard() {
     cout << "  Flag fall includes the first 1 km. Midnight surcharge +50% (12am-6am).\n";
     cout << "  Phone booking fee RM" << formatNumber(PHONE_BOOKING_FEE) << ".\n\n";
 
-    cout << "  Sources: The Star (2023) for GrabCar; TaxiFareFinder for GrabCar Premium;\n";
-    cout << "  SPAD rates reported by The Star and The Edge (2015) for taxis.\n";
+    cout << "  Sources: The Star and SoyaCincau (2023) for GrabCar; TaxiFareFinder for\n";
+    cout << "  GrabCar Premium; SPAD rates reported by The Star and The Edge (2015) for\n";
+    cout << "  taxis; klia2.info for the midnight surcharge and phone booking fee.\n";
     cout << "  Surge levels are simplified for this program.\n";
 }
 

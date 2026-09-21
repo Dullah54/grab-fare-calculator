@@ -46,6 +46,7 @@ never lower than the minimum fare, then minus promo discount, plus toll.
 
 - GrabCar rates in the Klang Valley since 16 January 2023 (before that RM0.70/km and RM0.20/min).
   They apply all day; peak-hour trips cost more because they take longer (Yeoh, 2023, The Star).
+  The RM2 base fare and RM5 minimum fare did not change (Dzafri, 2023, SoyaCincau).
 - GrabCar Premium rates: TaxiFareFinder GrabCar Premium estimator for Kuala Lumpur.
 - Demand multiplier (dynamic pricing) is simplified for this program: normal x1.0, high x1.3, very high x1.6.
   Grab does not publish its surge levels.
@@ -64,14 +65,14 @@ plus 50% between 12:00am and 5:59am, plus RM2 if booked by phone, plus toll.
 
 - Klang Valley meter rates set by SPAD in 2015; the RM3 flag fall covers the first kilometre
   (Meng et al., 2015, The Star; The Edge Malaysia, 2015).
-- 50% midnight surcharge and RM2 phone booking fee (klia2.info, 2015).
+- 50% midnight surcharge and RM2 phone booking fee (klia2.info, n.d.).
 - A meter only charges time while the taxi is moving slowly, so the program charges waiting time for
   part of the trip: 10% (light traffic), 30% (moderate) or 50% (heavy). These shares are our assumption.
 
 ### Cash rounding
 
 Cash totals are rounded to the nearest 5 sen, following Bank Negara Malaysia's rounding mechanism
-(in force since 1 April 2008).
+(in force since 1 April 2008; Bank Negara Malaysia, 2007).
 
 ## 5. Logic plan
 

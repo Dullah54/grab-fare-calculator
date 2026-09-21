@@ -93,16 +93,22 @@ build.bat                 Windows build script
 The program uses published rates, simplified for learning purposes. They are not official Grab
 or taxi price quotes.
 
-- GrabCar: RM2 base, RM0.25/km, RM0.43/min, RM5 minimum in the Klang Valley since 16 January 2023.
-  Yeoh, A. (2023, January 16). Grab updates fare structure, rides during peak hours to cost more.
+- GrabCar: RM0.25/km and RM0.43/min in the Klang Valley since 16 January 2023 (before that RM0.70/km and
+  RM0.20/min). Yeoh, A. (2023, January 16). Grab updates fare structure, rides during peak hours to cost more.
   *The Star*. https://www.thestar.com.my/tech/tech-news/2023/01/16/grab-updates-fee-structure-rides-during-peak-hours-to-cost-more
+- GrabCar's RM2 base fare and RM5 minimum fare (unchanged in 2023) and Grab's peak hours (7-9am, 5-8pm):
+  Dzafri, D. (2023, January 17). Grab Malaysia raises fare prices per minute. This is why. *SoyaCincau*.
+  https://soyacincau.com/2023/01/17/grab-malaysia-raises-fare-prices-per-minute-this-is-why/
 - GrabCar Premium: TaxiFareFinder. (n.d.). *GrabCar Premium price estimator & cost calculator: Kuala Lumpur,
   Malaysia*. https://www.taxifarefinder.com/main.php?city=GrabCar-Premium-Kuala-Lumpur-Malaysia
-- Grab's peak hours (7-9am, 5-8pm): Dzafri, D. (2023, January 17). Grab Malaysia raises fare prices per
-  minute. This is why. *SoyaCincau*. https://soyacincau.com/2023/01/17/grab-malaysia-raises-fare-prices-per-minute-this-is-why/
-- Budget taxi and Teksi 1Malaysia meter rates set by SPAD in 2015: Meng, Y. C., Lee, P., & Gasper, D. T.
-  (2015, March 20), *The Star*; The Edge Malaysia (2015, March 19).
-- Midnight surcharge and phone booking fee: klia2.info (2015). Useful tips on using Malaysian taxi services.
-- Cash rounding: Bank Negara Malaysia. (n.d.). *About the rounding mechanism*.
+- Budget taxi and Teksi 1Malaysia meter rates set by SPAD in 2015 (the RM3 flag fall covers the first km):
+  Meng, Y. C., Lee, P., & Gasper, D. T. (2015, March 20). Fares increased for taxi, train and express bus
+  services. *The Star*; The Edge Malaysia. (2015, March 19). Taxi fares go up immediately, express bus from
+  May 15 – SPAD.
+- Midnight surcharge and phone booking fee: klia2.info. (n.d.). *Useful tips on using Malaysian taxi services*.
+  https://www.klia2.info/taxis/useful-tips-on-using-malaysian-taxi-services/
+- Cash rounding to the nearest 5 sen (since 1 April 2008): Bank Negara Malaysia. (2007, November 13).
+  *Introduction of a rounding mechanism for over-the-counter payments* [Press release].
+  https://www.bnm.gov.my/-/introduction-of-a-rounding-mechanism-for-over-the-counter-payments
 - Our own simplifications: the surge levels (x1.3, x1.6), the share of taxi time charged as waiting
   time, and the promo codes STUDENT10 and NEWRIDER.
